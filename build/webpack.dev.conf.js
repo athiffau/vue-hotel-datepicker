@@ -4,6 +4,7 @@ const webpack = require('webpack')
 const path = require('path')
 
 config.devtool = '#eval-source-map'
+config.mode = 'development'
 
 config.devServer = {
   host: 'localhost',

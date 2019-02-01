@@ -1,4 +1,5 @@
 const path = require('path')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
   entry: {
@@ -17,6 +18,9 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
     },
   },
+  plugins: [
+    new VueLoaderPlugin()
+  ],
   module: {
     rules: [
         {
@@ -46,6 +50,7 @@ module.exports = {
         use: 'babel-loader',
         exclude: /node_modules/
       },
+
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         use: {
@@ -67,6 +72,21 @@ module.exports = {
           },
         },
       },
+
+      { 
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: 'vue-style-loader' },
+          { loader: 'css-loader' },
+          { loader: 'sass-loader' }
+        ] 
+      },
+
+      {
+        test: /\.pug$/,
+        loader: 'pug-plain-loader'
+      }
 
     ],
   },
