@@ -6,7 +6,6 @@
         <h3>Allow check-in and check-out on the same day</h3>
         <DatePicker
           :minNights="0"
-          :textDates="[{'date':'2019-01-31','text':'<br>100€'}]"
         />
       </div>
       <div class="box">
