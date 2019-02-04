@@ -264,10 +264,8 @@
         type: Boolean,
       },
       textDates: {
-          default: function () {
-              return []
-          },
-          type: Array
+          default: null,
+          type: [Array,Function]
       }
     },
 
@@ -287,6 +285,7 @@
         yUp: null,
         sortedDisabledDates: null,
         screenSize: this.handleWindowResize(),
+        td: '',
       };
     },
 
@@ -488,19 +487,28 @@
       },
 
       getTextDate(date) {
-          // if (!this.textDates && !this.advancedTextDate) return null;
-
-          if (this.textDate) {
-            for (let i=0;i<this.textDates.length;i++){
-                let item = this.textDates[i];
-                if (item.date && item.date==fecha.format(date,'YYYY-MM-DD')){
-                    return item.text;
-                }
-            }
-          }
-
           if (this.advancedTextDate) {
             return this.advancedTextDate(this.startDate, date, 60)
+          }
+
+          let _type = typeof this.textDates
+          let _textDates = null
+
+          if (this.textDates === null) {
+            return this.textDates
+          } else if (Array.isArray(this.textDates)) {
+            _textDates = this.textDates
+          } else if (_type === 'function') {
+            _textDates = this.textDates(date)
+          } else {
+            return null
+          }
+          
+          for (let i=0;i<_textDates.length;i++){
+              let item = _textDates[i];
+              if (item.date && item.date==fecha.format(date,'YYYY-MM-DD')){
+                  return item.text;
+              }
           }
 
           return null

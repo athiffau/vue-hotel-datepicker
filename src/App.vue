@@ -162,6 +162,7 @@
             :firstDayOfWeek="1"
             :checkInValue="new Date()"
             :checkOutValue="new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 3)"
+            :textDates="setTextDates"
             @check-out-selected="getFinalPrice($event)"
         />
       </div>
@@ -207,7 +208,10 @@
           'check-out': 'Partida',
           'month-names': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
         },
-        dummyStore: null
+        dummyStore: {
+          pricing: null,
+          labels: []
+        }
       };
     },
 
@@ -307,11 +311,11 @@
       getPricingMonth() {
         //in this example, request 60 days worth of pricing for labels
         //and use a dummy data property to act as the store
-        if (!this.dummyStore) {
-          this.dummyStore = Array.from({length: 60}, () => Math.floor(Math.random() * 60))
+        if (!this.dummyStore.pricing) {
+          this.dummyStore.pricing = Array.from({length: 60}, () => Math.floor(Math.random() * 300))
         }
 
-        return this.dummyStore
+        return this.dummyStore.pricing
 
       },
       fillInPricing(prices, price, num) {
@@ -368,6 +372,22 @@
         let nightPrice = formatMoney(pricing[day.getDate()-1], currency)
 
         return `<div class="day-label label-bottom">${nightPrice}</div>`
+      },
+      setTextDates(date) {
+    
+        let _month = date.getMonth()
+
+        _month += 1
+
+        if (!this.dummyStore.labels[_month]) {
+          let _daysA = Array.from({length: 5}, () => Math.floor(Math.random() * 25))
+
+          let _monthA = Array.from(_daysA, (e,i) => new Object({'date':`${date.getFullYear()}-${_month.toString().padStart(2,'0')}-${_daysA[i].toString().padStart(2,'0')}`, 'text': '<div style="color:red;">Txt</div>'}))
+
+          this.dummyStore.labels[_month] = _monthA
+        }
+
+        return this.dummyStore.labels[_month]
       }
     }
   };

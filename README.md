@@ -138,10 +138,11 @@ Shows a tooltip with the number of nights when hovering a date.
 
 ### tooltipMessage
 
-- Type: `String`
+- Type: `String | Function`
 - Default `null`
 
 If provided, it will override the default tooltip "X nights" with the text provided. You can use HTML in the string.
+If combined with advancedTooltip function, the tooltipMessage will be combined
 
 ## singleDateSelection
 
@@ -182,6 +183,26 @@ i18n: {
 }
 ```
 
+### showAdvancedTooltip
+
+- Type: `Boolean | Function`
+- Default: `null`
+
+If returns true, adds additional information to the hover tooltip. Requires function bound to advancedTooltip
+
+### advancedTooltip
+
+- Type: `Function`
+- Default: null
+
+Called if `showAdvancedTooltip` is enabled. Function returns formatted html to be inserted in the tooltip 
+
+### advancedTextDate
+
+- Type: `Function`
+- Default: null
+
+Returns array of labels to add below the day number
 
 ## API
 ⚠️ In order to open/close the datepicker from an external element, such as a button make sure to set `closeDatepickerOnClickOutside` to false
@@ -205,6 +226,9 @@ Emitted every time a new check in date is selected with the new date as payload
 
 ### checkOutChanged
 Emitted every time a new check out date is selected with the new date as payload
+
+### checkOutSelected
+Emitted every time the checkOut date is set 
 
 ## Credits
 This component was originally built as a Vue wrapper component for the [Hotel Datepicker](https://github.com/benitolopez/hotel-datepicker) by @benitolopez. Version 2.0.0 was completely rewritten with Vue, removing the original library, removing some features and introducing others.
