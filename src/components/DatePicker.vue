@@ -114,6 +114,9 @@
                   :nextDisabledDate='nextDisabledDate'
                   :activeMonthIndex='activeMonthIndex'
                   :hoveringDate='hoveringDate'
+                  :showAdvancedTooltip="showAdvancedTooltip"
+                  :advancedTooltip="advancedTooltip"
+                  :advancedTextDate="advancedTextDate"
                   :tooltipMessage='tooltipMessage'
                   :dayNumber='getDay(day.date)'
                   :belongsToThisMonth='day.belongsToThisMonth'
@@ -218,11 +221,23 @@
       },
       hoveringTooltip: {
         default: true,
-        type: [Boolean, Function]
+        type: Boolean
       },
       tooltipMessage: {
         default: null,
-        type: String
+        type: [String, Function]
+      },
+      showAdvancedTooltip: {
+        default: false,
+        type: [Boolean, Function]
+      },
+      advancedTooltip: {
+        default: null,
+        type: Function
+      },
+      advancedTextDate: {
+        default: null,
+        type: Function
       },
       i18n: {
         default: () => defaulti18n,
@@ -248,12 +263,12 @@
         default: true,
         type: Boolean,
       },
-        textDates: {
-            default: function () {
-                return []
-            },
-            type: Array
-        }
+      textDates: {
+          default: function () {
+              return []
+          },
+          type: Array
+      }
     },
 
     data() {
@@ -303,8 +318,7 @@
         this.$emit("check-in-changed", newDate)
       },
       checkOut(newDate) {
-
-        if (this.checkOut !== null && this.checkOut !== null) {
+        if (this.checkIn !== null && this.checkOut !== null) {
           this.hoveringDate = null;
           this.nextDisabledDate = null;
           this.show = true;
@@ -314,6 +328,7 @@
         }
 
         this.$emit("check-out-changed", newDate)
+
       },
 
     },
@@ -418,6 +433,10 @@
           this.checkIn = event.date;
         }
 
+        if(this.checkOut !== null) {
+          this.$emit("check-out-selected", { checkIn: this.checkIn, checkOut: this.checkOut, count: this.countDays(this.checkIn, this.checkOut)})
+        }
+
         this.nextDisabledDate = event.nextDisabledDate
       },
 
@@ -468,15 +487,24 @@
         this.checkOut = date;
       },
 
-        getTextDate(date) {
-            if (!this.textDates) return null;
+      getTextDate(date) {
+          // if (!this.textDates && !this.advancedTextDate) return null;
+
+          if (this.textDate) {
             for (let i=0;i<this.textDates.length;i++){
                 let item = this.textDates[i];
                 if (item.date && item.date==fecha.format(date,'YYYY-MM-DD')){
                     return item.text;
                 }
             }
-        },
+          }
+
+          if (this.advancedTextDate) {
+            return this.advancedTextDate(this.startDate, date, 60)
+          }
+
+          return null
+      },
 
       getDay(date) {
           let textDate = this.getTextDate(date);
@@ -488,20 +516,20 @@
       },
 
 
-    createMonth(date){
-      const firstDay = this.getFirstDay(date, this.firstDayOfWeek);
-        let month = {
-          days: []
-        };
+      createMonth(date){
+        const firstDay = this.getFirstDay(date, this.firstDayOfWeek);
+          let month = {
+            days: []
+          };
 
-      for (let i = 0; i < 42; i++) {
-        month.days.push({
-          date: this.addDays(firstDay, i),
-          belongsToThisMonth: this.addDays(firstDay, i).getMonth() === date.getMonth(),
-          isInRange: false,
-        });
-      }
-        this.months.push(month);
+        for (let i = 0; i < 42; i++) {
+          month.days.push({
+            date: this.addDays(firstDay, i),
+            belongsToThisMonth: this.addDays(firstDay, i).getMonth() === date.getMonth(),
+            isInRange: false,
+          });
+        }
+          this.months.push(month);
       },
 
       parseDisabledDates() {
@@ -1058,8 +1086,10 @@
             border-radius: 2px;
             color: $white;
             font-size: 11px;
-            margin-left: 5px;
-            margin-top: -22px;
+            // margin-left: -3px;
+            // margin-top: -32px;
+            // left: -50%;
+            
             padding: 5px 10px;
             position: absolute;
             z-index: 50;
@@ -1074,6 +1104,11 @@
                 margin-left: -4px;
                 position: absolute;
             }
+
+          &.ontop {
+            transform: translate(0,-130%);
+          } 
+
         }
     }
 

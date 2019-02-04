@@ -1,6 +1,6 @@
 <template lang='pug'>
   div
-    .datepicker__tooltip(v-if='showTooltip && this.options.hoveringTooltip' v-html='tooltipMessageDisplay')
+    .datepicker__tooltip(v-if='showTooltip && (this.options.hoveringTooltip || this.options.showAdvancedTooltip)' v-html='tooltipMessageDisplay' :class="getTooltipPosition")
     .datepicker__month-day(
       @click.prevent.stop='dayClicked(date)'
       @keyup.enter.prevent.stop='dayClicked(date)'
@@ -64,7 +64,7 @@ export default {
     },
     tooltipMessage: {
       default: null,
-      type: String
+      type: [String, Function]
     },
     currentDateStyle:{
       required: true,
@@ -90,11 +90,60 @@ export default {
     nightsCount() {
       return this.countDays(this.checkIn, this.hoveringDate);
     },
+    getTooltipPosition() {
+      if (!this.options.showAdvancedTooltip) {
+        return 'ontop'
+      }
+
+      let _class = `adv-tooltip ${(this.showTooltip && this.options.hoveringTooltip && this.nightsCount > 1) 
+                            ? typeof this.tooltipMessage === 'string' 
+                              ? 'ext-padding-5'
+                              : this.tooltipMessage(this.checkIn, this.nightsCount) !== '' 
+                                ? 'ext-padding-5'
+                                : 'ext-padding-4' 
+                            : this.nightsCount > 1 
+                              ? 'ext-padding-4'
+                              : 'ext-padding-3'}`
+
+      return _class
+    },
     tooltipMessageDisplay() {
-      return this.tooltipMessage
-      ? this.tooltipMessage
-      : `${this.nightsCount} ${this.nightsCount !== 1 ?
-              this.options.i18n['nights'] : this.options.i18n['night']}`
+
+      if (!this.options.showAdvancedTooltip) {
+        return this.tooltipMessage
+                ? typeof this.tooltipMessage === 'string'
+                  ? this.tooltipMessage
+                  : this.tooltipMessage(this.checkIn, this.nightsCount)
+                : `${this.nightsCount} ${this.nightsCount !== 1 
+                  ? this.options.i18n['nights'] 
+                  : this.options.i18n['night']}`
+      }
+
+      let html = ''
+
+      if (this.showTooltip && this.options.hoveringTooltip) {
+        html = html.concat(this.tooltipMessage 
+                            ? typeof this.tooltipMessage === 'string' 
+                              ? `<div><strong>${this.tooltipMessage}</strong></div>` 
+                              : this.tooltipMessage(this.checkIn, this.nightsCount) 
+                            : '')
+      }
+
+      html = html.concat(`${this.nightsCount} ${this.nightsCount !== 1 ? this.options.i18n['nights'] : this.options.i18n['night']}`)
+
+      if (this.options.showAdvancedTooltip) {
+        let data = this.options.advancedTooltip(this.checkIn, this.nightsCount)
+        if (this.nightsCount > 0) {
+          html = html.concat( `<div>${data.prices[0].concat( data.prices[this.nightsCount] ? data.prices[this.nightsCount] : data.prices[data.prices.length -1])}</div>`)
+          if (this.nightsCount !== 1) {
+            html = html.concat( `<div>${data.averages[0].concat( data.averages[this.nightCount] ? data.averages[this.nightsCount] : data.averages[data.averages.length -1])}</div>`)
+            html = html.concat( `<div>${data.totals[0].concat( data.totals[this.nightCount] ? data.totals[this.nightCount] : data.totals[data.totals.length -1])}</div>`)
+          }
+        }
+      }
+
+      return html
+
     },
     showTooltip() {
       return  !this.isDisabled &&
@@ -311,6 +360,25 @@ export default {
   beforeMount(){
     this.checkIfDisabled()
     this.checkIfHighlighted()
-  },
+  }
+
 }
 </script>
+
+<style scoped>
+.adv-tooltip {
+  margin-left: -18px;
+}
+
+.ext-padding-5 {
+  margin-top: -90px;
+}
+
+.ext-padding-4 {
+  margin-top: -76px;
+}
+
+.ext-padding-3 {
+  margin-top: -50px;
+}
+</style>
