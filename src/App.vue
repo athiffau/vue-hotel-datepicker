@@ -177,7 +177,7 @@
           :hoveringTooltip=true
           :showYear=true
           :openOnShow=true
-
+          :isVuetify=true
           :closeDatepickerOnClickOutside=false
           @check-out-selected="getFinalPrice($event)"
         />
