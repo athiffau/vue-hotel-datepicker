@@ -10,6 +10,13 @@ export default {
       }
     });
 
+    // for (let i=0, len = datesArray.length; i < len; i++) {
+    //   var date = new Date( datesArray[i] );
+    //   if (date >= now && date < closest) {
+    //     closest = datesArray[i];
+    //   }    
+    // }
+
     if (closest === Infinity) {
       return null;
     } else {
