@@ -27,7 +27,7 @@
       svg(xmlns='http://www.w3.org/2000/svg' viewBox="0 0 68 68")
         path(d='M6.5 6.5l55 55M61.5 6.5l-55 55')
 
-    .datepicker( :class='`${ isOpen ? "datepicker--open" : "datepicker--closed" }`')
+    .datepicker( :class='[`${ isOpen ? "datepicker--open" : "datepicker--closed" }`, `${ isVuetify ? "datepicker__vuetify" : ""}`]')
       .-hide-on-desktop
         .datepicker__dummy-wrapper.datepicker__dummy-wrapper--no-border(
           @click='toggleDatepicker' :class="`${isOpen ? 'datepicker__dummy-wrapper--is-active' : ''}`"
@@ -268,6 +268,10 @@
         type: [Array,Function]
       },
       openOnShow: {
+        default: false,
+        type: Boolean
+      },
+      isVuetify: {
         default: false,
         type: Boolean
       }
@@ -683,6 +687,12 @@
         top: 48px;
         position: absolute;
         z-index: 999;
+
+        &__vuetify {
+          position: static !important;
+          height: auto !important;
+          overflow: unset !important;
+        }
 
         button.next--mobile {
             background: none;
