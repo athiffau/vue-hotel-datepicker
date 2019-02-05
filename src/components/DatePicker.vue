@@ -1,5 +1,5 @@
 <template lang='pug'>
-  .datepicker__wrapper(v-if='show' v-on-click-outside='clickOutside' @blur="clickOutside")
+  .datepicker__wrapper(v-if='show' v-on-click-outside='clickOutside' @blur="clickOutside" :class='`${isVuetify ? "datepicker__wrapper__vuetify" : "" }`')
     .datepicker__close-button.-hide-on-desktop(v-if='isOpen' @click='hideDatepicker') ＋
     .datepicker__dummy-wrapper(  :class="`${isOpen ? 'datepicker__dummy-wrapper--is-active' : ''}` ")
       date-input(
@@ -751,6 +751,10 @@
             width: 100%;
             height: 48px;
             background: $white url('calendar_icon.regular.svg') no-repeat 17px center / 16px;
+        
+          &__vuetify {
+            height: auto !important;
+          }
         }
 
         &__input {
