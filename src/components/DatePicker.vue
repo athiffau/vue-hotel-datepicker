@@ -264,8 +264,12 @@
         type: Boolean,
       },
       textDates: {
-          default: null,
-          type: [Array,Function]
+        default: null,
+        type: [Array,Function]
+      },
+      openOnShow: {
+        default: false,
+        type: Boolean
       }
     },
 
@@ -476,6 +480,7 @@
         );
 
         this.activeMonthIndex++;
+
       }, 200),
 
       setCheckIn(date) {
@@ -596,6 +601,8 @@
       this.onElementHeightChange(document.body, () => {
         this.emitHeighChangeEvent();
       });
+
+      this.isOpen = this.openOnShow
     },
 
     destroyed() {

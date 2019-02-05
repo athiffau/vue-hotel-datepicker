@@ -176,6 +176,8 @@
           :tooltipMessage="setDynamicTitle"
           :hoveringTooltip=true
           :showYear=true
+          :openOnShow=true
+          :closeDatepickerOnClickOutside=false
           @check-out-selected="getFinalPrice($event)"
         />
       </div>
